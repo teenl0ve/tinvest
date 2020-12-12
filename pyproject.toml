@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tinvest"
-version = "2.3.3"
+version = "3.0.0"
 description = "Tinkoff Invest"
 authors = ["Danil Akhtarov <daxartio@gmail.com>"]
 license = "MIT"
@@ -13,14 +13,13 @@ keywords = []
 tinvest = 'tinvest.cli.app:app'
 
 [tool.poetry.dependencies]
-python = ">=3.7,<4.0"
+python = ">=3.8,<4.0"
 aiohttp = ">=3.6,<4.0"
 pydantic = ">=1.2,<2"
 requests = ">=2.22,<3.0"
 typer = {version = ">=0.3.2,<1", optional = true}
 
 [tool.poetry.dev-dependencies]
-asynctest = "*"
 autoflake = "*"
 black = {version = "*", allow-prereleases = true}
 flake8 = "*"

@@ -1,109 +1,155 @@
 import asyncio
 import logging
-from datetime import datetime
-from typing import Any, Callable, Coroutine, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Optional, Set, TypeVar, Union
 
 import aiohttp
-from pydantic.datetime_parse import parse_datetime  # pylint:disable=E0611
 
 from .constants import STREAMING
 from .schemas import (
     CandleResolution,
-    CandleStreaming,
-    ErrorStreaming,
-    EventName,
-    InstrumentInfoStreaming,
-    OrderbookStreaming,
-    ServiceEventName,
+    CandleStreamingResponse,
+    CandleSubscription,
+    ErrorStreamingResponse,
+    Event,
+    HashableModel,
+    InstrumentInfoStreamingResponse,
+    InstrumentInfoSubscription,
+    OrderbookStreamingResponse,
+    OrderbookSubscription,
+    StreamingResponse,
 )
-from .typedefs import AnyDict
-from .utils import Func, infinity
+from .utils import validate_token
 
-__all__ = (
-    'Streaming',
-    'StreamingApi',
-    'StreamingEvents',
-    'CandleEvent',
-    'OrderbookEvent',
-    'InstrumentInfoEvent',
-)
+__all__ = ('Streaming', 'CandleAPI', 'InstrumentInfoAPI', 'OrderbookAPI')
 
 logger = logging.getLogger(__name__)
 
+T = TypeVar('T')
 
-_Handler = Tuple[str, Callable]  # pragma: no mutate
+
+class StopQueueType:
+    def __repr__(self):
+        return 'StopQueueType'
+
+    def __copy__(self: T) -> T:
+        return self
+
+    def __deepcopy__(self: T, _: Any) -> T:
+        return self
 
 
-class Streaming:
-    schemas: Dict[EventName, Any] = {
-        EventName.candle: CandleStreaming,
-        EventName.orderbook: OrderbookStreaming,
-        EventName.instrument_info: InstrumentInfoStreaming,
-        EventName.error: ErrorStreaming,
-    }
+STOP_QUEUE = StopQueueType()
+
+if TYPE_CHECKING:
+    # pylint:disable=unsubscriptable-object
+    _BaseQueue = asyncio.Queue[
+        Union[
+            CandleStreamingResponse,
+            OrderbookStreamingResponse,
+            InstrumentInfoStreamingResponse,
+            ErrorStreamingResponse,
+            StopQueueType,
+        ]
+    ]
+else:
+    _BaseQueue = asyncio.Queue
+
+
+class Streaming:  # pylint:disable=too-many-instance-attributes
+    """
+    ```python
+    from tinvest import CandleResolution, Streaming
+
+    async def main():
+        async with Streaming(TOKEN) as streaming:
+            await streaming.candle.subscribe('BBG0013HGFT4', CandleResolution.min1)
+            await streaming.orderbook.subscribe('BBG0013HGFT4', 5)
+            await streaming.instrument_info.subscribe('BBG0013HGFT4')
+
+            async for event in streaming:
+                print(event)
+                # responses
+                # tinvest.InstrumentInfoStreamingResponse
+                # tinvest.OrderbookStreamingResponse
+                # tinvest.CandleStreamingResponse
+                # tinvest.ErrorStreamingResponse
+
+    ```
+    """
 
     def __init__(
         self,
         token: str,
         *,
         session: Optional[aiohttp.ClientSession] = None,
-        state: Optional[AnyDict] = None,
+        reconnect_enabled: bool = True,
         reconnect_timeout: float = 3,
         ws_close_timeout: float = 0,
         receive_timeout: Optional[float] = 5,
         heartbeat: Optional[float] = 3,
     ) -> None:
-        """
-        ```python
-        import tinvest
-
-        events = tinvest.StreamingEvents()
-
-        ...
-
-        async def main():
-            await (
-                tinvest.Streaming("TOKEN", state={"postgres": ...})
-                .add_handlers(events)
-                .run()
-            )
-
-        if __name__ == "__main__":
-            try:
-                asyncio.run(main())
-            except KeyboardInterrupt:
-                pass
-        ```
-        """
-        super().__init__()
-        if not token:
-            raise ValueError('Token can not be empty')
+        validate_token(token)
         self._api: str = STREAMING
         self._token: str = token
         self._session: aiohttp.ClientSession = session or aiohttp.ClientSession()
-        self._handlers: List[_Handler] = []
-        self._state = state
+        self._reconnect_enabled = reconnect_enabled
         self._reconnect_timeout = reconnect_timeout
         self._ws_close_timeout = ws_close_timeout
         self._receive_timeout = receive_timeout
         self._heartbeat = heartbeat
 
-    def add_handlers(
-        self, handlers: Union[List[_Handler], 'StreamingEvents']
-    ) -> 'Streaming':
-        if isinstance(handlers, list):
-            self._handlers.extend(handlers)
-        else:
-            self._handlers.extend(handlers.handlers)
+        self._queue: _BaseQueue = asyncio.Queue()
+        self._ready = asyncio.Event()
+        self._closing = asyncio.Event()
+        self._ws_is_closed = asyncio.Event()
+        self._lock = asyncio.Lock()
+        self._connection_task: Optional[asyncio.Task] = None
+        self.candle = CandleAPI()
+        self.instrument_info = InstrumentInfoAPI()
+        self.orderbook = OrderbookAPI()
 
-        for _, handler in self._handlers:
-            handler.receive_server_time__ = (  # type:ignore
-                'server_time' in handler.__code__.co_varnames
-            )
+    async def __aenter__(self) -> 'Streaming':
+        await self.start()
         return self
 
-    @infinity
-    async def run(self) -> None:
+    async def __aexit__(self, exc_type, exc_val, exc_tb) -> bool:
+        await self.stop()
+        return exc_type is None
+
+    async def __aiter__(self):
+        try:  # pylint:disable=too-many-nested-blocks
+            while True:
+                event = await self._queue.get()
+                if event is STOP_QUEUE:
+                    break
+                yield event
+        finally:
+            await self._unsubscribe()
+
+    async def start(self):
+        self._connection_task = asyncio.create_task(self._run())
+        await self._ready.wait()
+
+    async def stop(self):
+        await self._queue.put(STOP_QUEUE)
+        self._closing.set()
+        await self._ws_is_closed.wait()
+        await self._session.close()
+        if self._connection_task:
+            await self._connection_task
+
+    async def _run(self) -> None:
+        if not self._reconnect_enabled:
+            await self._connect()
+            return
+
+        while True:
+            await self._connect()
+
+    async def _connect(self) -> None:
+        logger.info('Connecting to WebSocket')
+        self._closing.clear()
+        close_ws_task = None
         try:
             async with self._session.ws_connect(
                 self._api,
@@ -112,85 +158,127 @@ class Streaming:
                 timeout=self._ws_close_timeout,
                 receive_timeout=self._receive_timeout,
             ) as ws:
-                await self._run(ws)
-        except asyncio.CancelledError:  # pylint:disable=try-except-raise
-            raise
+                logger.info('Connection established')
+                close_ws_task = asyncio.create_task(self._close_ws(ws))
+                await self._handle_ws(ws)
         except asyncio.TimeoutError:
             logger.error('Timeout error. Try to reconnect')
             await asyncio.sleep(self._reconnect_timeout)
         except aiohttp.ClientConnectorError as e:
             logger.error('Connection error: %s. Try to reconnect', e)
             await asyncio.sleep(self._reconnect_timeout)
-        funcs = self._get_handlers(ServiceEventName.reconnect)
-        await asyncio.gather(*[Func(func)() for func in funcs])
+        finally:
+            self._closing.set()
+            if close_ws_task:
+                await close_ws_task
+            self._ready.clear()
 
-    async def _run(self, ws):
-        api = StreamingApi(ws, self._state)
+    async def _close_ws(self, ws: aiohttp.ClientWebSocketResponse):
         try:
-            funcs = self._get_handlers(ServiceEventName.startup)
-            await asyncio.gather(*[Func(func, api)() for func in funcs])
+            await self._ready.wait()
+            await self._closing.wait()
+            await ws.close()
+        finally:
+            self._ws_is_closed.set()
 
-            async for msg in ws:
-                if msg.type == aiohttp.WSMsgType.TEXT:
-                    data = msg.json()
+    async def _handle_ws(self, ws: aiohttp.ClientWebSocketResponse):
+        self.candle.set_ws(ws)
+        self.instrument_info.set_ws(ws)
+        self.orderbook.set_ws(ws)
+        await self._subscribe()
+        self._ready.set()
 
-                    event_name = data['event']
-                    payload = data['payload']
-                    server_time = parse_datetime(data['time'])
+        msg: aiohttp.WSMessage
+        async for msg in ws:
+            if msg.type == aiohttp.WSMsgType.TEXT:
+                response = StreamingResponse.parse_raw(msg.data)
+                data = _parse_response(response)
 
-                    if event_name in self.schemas:
-                        data = self.schemas[event_name].parse_obj(payload)
-                    else:
-                        data = payload
+                await self._queue.put(data)
 
-                    await asyncio.gather(
-                        *self._call_handlers(event_name, api, data, server_time)
-                    )
+            elif msg.type == aiohttp.WSMsgType.CLOSED:
+                break
+            elif msg.type == aiohttp.WSMsgType.ERROR:
+                break
 
-                elif msg.type == aiohttp.WSMsgType.CLOSED:
-                    break
-                elif msg.type == aiohttp.WSMsgType.ERROR:
-                    break
-        except asyncio.CancelledError:
-            await self._cleanup(api)
-            raise
+    async def _subscribe(self) -> None:
+        await self.candle.subscribe_all()
+        await self.instrument_info.subscribe_all()
+        await self.orderbook.subscribe_all()
 
-    def _call_handlers(
-        self,
-        event_name: EventName,
-        api: 'StreamingApi',
-        data: Any,
-        server_time: datetime,
-    ) -> List[Coroutine[Any, Any, None]]:
-        funcs = []
-        for func in self._get_handlers(event_name):
-            kwargs = {}
-            if func.receive_server_time__:
-                kwargs['server_time'] = server_time
-
-            funcs.append(Func(func, api, data, **kwargs)())
-
-        return funcs
-
-    def _get_handlers(self, event_name):
-        return (func for name, func in self._handlers if name == event_name)
-
-    async def _cleanup(self, api) -> None:
-        funcs = self._get_handlers(ServiceEventName.cleanup)
-        await asyncio.gather(*[Func(func, api)() for func in funcs])
-        await self._session.close()
+    async def _unsubscribe(self) -> None:
+        await self.candle.unsubscribe_all()
+        await self.instrument_info.unsubscribe_all()
+        await self.orderbook.unsubscribe_all()
 
 
-class _BaseEvent:
-    def __init__(self, ws):
+def _parse_response(response: StreamingResponse) -> Any:
+    data: Any = None
+
+    if response.event == Event.instrument_info:
+        data = InstrumentInfoStreamingResponse.parse_obj(response.dict())
+
+    if response.event == Event.orderbook:
+        data = OrderbookStreamingResponse.parse_obj(response.dict())
+
+    if response.event == Event.candle:
+        data = CandleStreamingResponse.parse_obj(response.dict())
+
+    if response.event == Event.error:
+        data = ErrorStreamingResponse.parse_obj(response.dict())
+        logger.error('Error response: %s', data)
+
+    return data
+
+
+class _BaseEventAPI:
+    event_name: Event
+
+    def __init__(self):
+        self.ws: Optional[aiohttp.ClientWebSocketResponse] = None
+        self._subscriptions: Set[HashableModel] = set()
+
+    @property
+    def subscription(self) -> str:
+        return f'{self.event_name.value}:subscribe'
+
+    @property
+    def unsubscription(self) -> str:
+        return f'{self.event_name.value}:unsubscribe'
+
+    def set_ws(self, ws: aiohttp.ClientWebSocketResponse) -> None:
         self.ws = ws
 
-    async def _send(self, payload):
-        await self.ws.send_json(payload)
+    async def subscribe_all(self) -> None:
+        for payload in self._subscriptions:
+            await self._send(payload, True)
+
+    async def unsubscribe_all(self) -> None:
+        for payload in self._subscriptions:
+            await self._send(payload)
+
+    async def _send(
+        self, payload: HashableModel, is_subscription: bool = False
+    ) -> bool:
+        if not self.ws:
+            return False
+        event: str
+        if is_subscription:
+            self._subscriptions.add(payload)
+            event = self.subscription
+        else:
+            self._subscriptions.remove(payload)
+            event = self.unsubscription
+        try:
+            await self.ws.send_json({'event': event, **payload.dict()})
+            return True
+        except ConnectionResetError as e:
+            logger.error('Connection eror: %s', e)
+            return False
 
 
-class CandleEvent(_BaseEvent):
-    INTERVALS = tuple(c.value for c in CandleResolution)
+class CandleAPI(_BaseEventAPI):
+    event_name = Event.candle
 
     def subscribe(
         self,
@@ -198,12 +286,7 @@ class CandleEvent(_BaseEvent):
         interval: CandleResolution,
         request_id: Optional[str] = None,
     ):
-        return self._send(
-            {
-                'event': f'{EventName.candle}:subscribe',
-                **self._get_payload(figi, interval, request_id),
-            }
-        )
+        return self._send(self._get_payload(figi, interval, request_id), True)
 
     def unsubscribe(
         self,
@@ -211,206 +294,52 @@ class CandleEvent(_BaseEvent):
         interval: CandleResolution,
         request_id: Optional[str] = None,
     ):
-        return self._send(
-            {
-                'event': f'{EventName.candle}:unsubscribe',
-                **self._get_payload(figi, interval, request_id),
-            }
-        )
+        return self._send(self._get_payload(figi, interval, request_id))
 
     def _get_payload(
         self,
         figi: str,
         interval: CandleResolution,
         request_id: Optional[str] = None,
-    ):
-        if interval not in self.INTERVALS:
-            raise ValueError(f'{interval} not in {self.INTERVALS}')
-
-        data = {'figi': figi, 'interval': interval}
-        if request_id:
-            data['request_id'] = request_id
-        return data
-
-
-class OrderbookEvent(_BaseEvent):
-    def subscribe(self, figi: str, depth: int = 2, request_id: Optional[str] = None):
-        return self._send(
-            {
-                'event': f'{EventName.orderbook}:subscribe',
-                **self._get_payload(figi, depth, request_id),
-            }
+    ) -> CandleSubscription:
+        return CandleSubscription(
+            figi=figi,
+            interval=interval,
+            request_id=request_id,
         )
 
-    def unsubscribe(self, figi: str, depth: int = 2, request_id: Optional[str] = None):
-        return self._send(
-            {
-                'event': f'{EventName.orderbook}:unsubscribe',
-                **self._get_payload(figi, depth, request_id),
-            }
-        )
+
+class OrderbookAPI(_BaseEventAPI):
+    event_name = Event.orderbook
+
+    def subscribe(self, figi: str, depth: int, request_id: Optional[str] = None):
+        return self._send(self._get_payload(figi, depth, request_id), True)
+
+    def unsubscribe(self, figi: str, depth: int, request_id: Optional[str] = None):
+        return self._send(self._get_payload(figi, depth, request_id))
 
     @staticmethod
-    def _get_payload(figi: str, depth: int = 2, request_id: Optional[str] = None):
-        if not 0 < depth <= 20:
-            raise ValueError(f'not 0 < {depth} <= 20')
-        data = {'figi': figi, 'depth': depth}
-        if request_id:
-            data['request_id'] = request_id
-        return data
-
-
-class InstrumentInfoEvent(_BaseEvent):
-    def subscribe(self, figi: str, request_id: Optional[str] = None):
-        return self._send(
-            {
-                'event': f'{EventName.instrument_info}:subscribe',
-                **self._get_payload(figi, request_id),
-            }
+    def _get_payload(
+        figi: str, depth: int, request_id: Optional[str] = None
+    ) -> OrderbookSubscription:
+        return OrderbookSubscription(
+            figi=figi,
+            depth=depth,
+            request_id=request_id,
         )
+
+
+class InstrumentInfoAPI(_BaseEventAPI):
+    event_name = Event.instrument_info
+
+    def subscribe(self, figi: str, request_id: Optional[str] = None):
+        return self._send(self._get_payload(figi, request_id), True)
 
     def unsubscribe(self, figi: str, request_id: Optional[str] = None):
-        return self._send(
-            {
-                'event': f'{EventName.instrument_info}:unsubscribe',
-                **self._get_payload(figi, request_id),
-            }
-        )
+        return self._send(self._get_payload(figi, request_id))
 
     @staticmethod
-    def _get_payload(figi: str, request_id: Optional[str] = None):
-        data = {'figi': figi}
-        if request_id:
-            data['request_id'] = request_id
-
-        return data
-
-
-class StreamingEvents:
-    """
-    ```python
-    import tinvest
-
-    events = tinvest.StreamingEvents()
-    ```
-    """
-
-    def __init__(self) -> None:
-        self.handlers: List[_Handler] = []
-
-    def _decorator_wrapper(self, event_name: str):
-        def decorator(func):
-            self.handlers.append((event_name, func))
-            return func
-
-        return decorator
-
-    def startup(self):
-        """
-        ```python
-        @events.startup()
-        async def startup(api: tinvest.StreamingApi):
-            await api.candle.subscribe("BBG0013HGFT4", tinvest.CandleResolution.min1)
-            await api.orderbook.subscribe("BBG0013HGFT4", 5, "123ASD1123")
-            await api.instrument_info.subscribe("BBG0013HGFT4")
-        ```
-        """
-        return self._decorator_wrapper(ServiceEventName.startup)
-
-    def candle(self):
-        """
-        ```python
-        @events.candle()
-        async def handle_candle(
-            api: tinvest.StreamingApi,
-            payload: tinvest.CandleStreaming,
-            server_time: datetime  # [optional] if you want
-        ):
-            pass
-        ```
-        ```python
-        @events.candle()
-        async def handle_candle(
-            api: tinvest.StreamingApi,
-            payload: tinvest.CandleStreaming,
-        ):
-            pass
-        ```
-        """
-        return self._decorator_wrapper(EventName.candle)
-
-    def orderbook(self):
-        """
-        ```python
-        @events.orderbook()
-        async def handle_orderbook(
-            api: tinvest.StreamingApi, payload: tinvest.OrderbookStreaming
-        ):
-            pass
-        ```
-        """
-        return self._decorator_wrapper(EventName.orderbook)
-
-    def instrument_info(self):
-        """
-        ```python
-        @events.instrument_info()
-        async def handle_instrument_info(
-            api: tinvest.StreamingApi, payload: tinvest.InstrumentInfoStreaming
-        ):
-            pass
-        ```
-        """
-        return self._decorator_wrapper(EventName.instrument_info)
-
-    def error(self):
-        """
-        ```python
-        @events.error()
-        async def handle_error(
-            api: tinvest.StreamingApi, payload: tinvest.ErrorStreaming
-        ):
-            pass
-        ```
-        """
-        return self._decorator_wrapper(EventName.error)
-
-    def cleanup(self):
-        """
-        ```python
-        @events.cleanup()
-        async def cleanup(api: tinvest.StreamingApi):
-            await api.candle.unsubscribe("BBG0013HGFT4", "1min")
-            await api.orderbook.unsubscribe("BBG0013HGFT4", 5)
-            await api.instrument_info.unsubscribe("BBG0013HGFT4")
-        ```
-        """
-        return self._decorator_wrapper(ServiceEventName.cleanup)
-
-    def reconnect(self):
-        """
-        ```python
-        @events.reconnect()
-        def handle_reconnect():
-            pass
-        ```
-        ```python
-        @events.reconnect()
-        async def handle_reconnect():
-            pass
-        ```
-        """
-        return self._decorator_wrapper(ServiceEventName.reconnect)
-
-
-class StreamingApi:
-    def __init__(self, ws, state: Optional[AnyDict] = None) -> None:
-        self.candle = CandleEvent(ws)
-        self.orderbook = OrderbookEvent(ws)
-        self.instrument_info = InstrumentInfoEvent(ws)
-        self._state = state
-
-    def __getitem__(self, key: str) -> Any:
-        if self._state and key in self._state:
-            return self._state[key]
-        raise KeyError
+    def _get_payload(
+        figi: str, request_id: Optional[str] = None
+    ) -> InstrumentInfoSubscription:
+        return InstrumentInfoSubscription(figi=figi, request_id=request_id)

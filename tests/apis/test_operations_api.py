@@ -1,23 +1,17 @@
 # pylint:disable=redefined-outer-name
 from datetime import datetime, timedelta
 
-import pytest
-
-from tinvest import OperationsApi, OperationsResponse
-
-
-@pytest.fixture()
-def api_client(http_client):
-    return OperationsApi(http_client)
+from tinvest import OperationsResponse
+from tinvest.apis import operations_get
 
 
-def test_operations_get(api_client, http_client, figi, broker_account_id):
+def test_operations_get(http_request, figi, broker_account_id):
     to = datetime.now()
     from_ = to - timedelta(days=7)
-    api_client.operations_get(
-        from_.isoformat(), to.isoformat(), figi, broker_account_id
+    operations_get(
+        http_request, from_.isoformat(), to.isoformat(), figi, broker_account_id
     )
-    http_client.request.assert_called_once_with(
+    http_request.assert_called_once_with(
         'GET',
         '/operations',
         response_model=OperationsResponse,
@@ -30,11 +24,11 @@ def test_operations_get(api_client, http_client, figi, broker_account_id):
     )
 
 
-def test_operations_get_without_optional_args(api_client, http_client):
+def test_operations_get_without_optional_args(http_request):
     to = datetime.now()
     from_ = to - timedelta(days=7)
-    api_client.operations_get(from_.isoformat(), to.isoformat())
-    http_client.request.assert_called_once_with(
+    operations_get(http_request, from_.isoformat(), to.isoformat())
+    http_request.assert_called_once_with(
         'GET',
         '/operations',
         response_model=OperationsResponse,

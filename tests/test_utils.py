@@ -1,9 +1,8 @@
 from datetime import datetime
 
-import asynctest
 import pytest
 
-from tinvest.utils import Func, isoformat, set_default_headers
+from tinvest.utils import Func, isoformat, set_default_headers, validate_token
 
 
 def test_set_default_headers(token):
@@ -49,9 +48,18 @@ async def test_sync_func(mocker):
 
 
 @pytest.mark.asyncio
-async def test_async_func():
-    some_async_func = asynctest.mock.CoroutineMock(return_value=1)
+async def test_async_func(mocker):
+    some_async_func = mocker.AsyncMock(return_value=1)
 
     assert await Func(some_async_func, 1, key='')() == 1
 
     some_async_func.assert_called_once_with(1, key='')
+
+
+def test_validate_token():
+    validate_token('token')
+
+
+def test_invalid_token():
+    with pytest.raises(ValueError, match='Token can not be empty'):
+        validate_token('')

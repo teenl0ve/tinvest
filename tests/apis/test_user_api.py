@@ -1,16 +1,11 @@
 # pylint:disable=redefined-outer-name
-import pytest
 
-from tinvest import UserAccountsResponse, UserApi
-
-
-@pytest.fixture()
-def api_client(http_client):
-    return UserApi(http_client)
+from tinvest import UserAccountsResponse
+from tinvest.apis import accounts_get
 
 
-def test_accounts_get(api_client, http_client):
-    api_client.accounts_get()
-    http_client.request.assert_called_once_with(
+def test_accounts_get(http_request):
+    accounts_get(http_request)
+    http_request.assert_called_once_with(
         'GET', '/user/accounts', response_model=UserAccountsResponse
     )

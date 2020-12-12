@@ -1,5 +1,4 @@
 # pylint:disable=redefined-outer-name
-import pytest
 
 from tinvest import (
     Empty,
@@ -8,19 +7,19 @@ from tinvest import (
     MarketOrderRequest,
     MarketOrderResponse,
     OperationType,
-    OrdersApi,
     OrdersResponse,
+)
+from tinvest.apis import (
+    orders_cancel_post,
+    orders_get,
+    orders_limit_order_post,
+    orders_market_order_post,
 )
 
 
-@pytest.fixture()
-def api_client(http_client):
-    return OrdersApi(http_client)
-
-
-def test_orders_get(api_client, http_client, broker_account_id):
-    api_client.orders_get(broker_account_id)
-    http_client.request.assert_called_once_with(
+def test_orders_get(http_request, broker_account_id):
+    orders_get(http_request, broker_account_id)
+    http_request.assert_called_once_with(
         'GET',
         '/orders',
         response_model=OrdersResponse,
@@ -28,9 +27,11 @@ def test_orders_get(api_client, http_client, broker_account_id):
     )
 
 
-def test_orders_get_without_broker_account_id(api_client, http_client):
-    api_client.orders_get()
-    http_client.request.assert_called_once_with(
+def test_orders_get_without_broker_account_id(http_request):
+    orders_get(
+        http_request,
+    )
+    http_request.assert_called_once_with(
         'GET',
         '/orders',
         response_model=OrdersResponse,
@@ -38,10 +39,10 @@ def test_orders_get_without_broker_account_id(api_client, http_client):
     )
 
 
-def test_orders_limit_order_post(api_client, http_client, figi, broker_account_id):
+def test_orders_limit_order_post(http_request, figi, broker_account_id):
     body = LimitOrderRequest(lots=3, operation=OperationType.buy, price=13.5)
-    api_client.orders_limit_order_post(figi, body, broker_account_id)
-    http_client.request.assert_called_once_with(
+    orders_limit_order_post(http_request, figi, body, broker_account_id)
+    http_request.assert_called_once_with(
         'POST',
         '/orders/limit-order',
         response_model=LimitOrderResponse,
@@ -50,12 +51,10 @@ def test_orders_limit_order_post(api_client, http_client, figi, broker_account_i
     )
 
 
-def test_orders_limit_order_post_without_broker_account_id(
-    api_client, http_client, figi
-):
+def test_orders_limit_order_post_without_broker_account_id(http_request, figi):
     body = LimitOrderRequest(lots=3, operation=OperationType.buy, price=13.5)
-    api_client.orders_limit_order_post(figi, body)
-    http_client.request.assert_called_once_with(
+    orders_limit_order_post(http_request, figi, body)
+    http_request.assert_called_once_with(
         'POST',
         '/orders/limit-order',
         response_model=LimitOrderResponse,
@@ -64,10 +63,10 @@ def test_orders_limit_order_post_without_broker_account_id(
     )
 
 
-def test_orders_market_order_post(api_client, http_client, figi, broker_account_id):
+def test_orders_market_order_post(http_request, figi, broker_account_id):
     body = MarketOrderRequest(lots=1, operation=OperationType.buy)
-    api_client.orders_market_order_post(figi, body, broker_account_id)
-    http_client.request.assert_called_once_with(
+    orders_market_order_post(http_request, figi, body, broker_account_id)
+    http_request.assert_called_once_with(
         'POST',
         '/orders/market-order',
         response_model=MarketOrderResponse,
@@ -76,12 +75,10 @@ def test_orders_market_order_post(api_client, http_client, figi, broker_account_
     )
 
 
-def test_orders_market_order_post_without_broker_account_id(
-    api_client, http_client, figi
-):
+def test_orders_market_order_post_without_broker_account_id(http_request, figi):
     body = MarketOrderRequest(lots=1, operation=OperationType.buy)
-    api_client.orders_market_order_post(figi, body)
-    http_client.request.assert_called_once_with(
+    orders_market_order_post(http_request, figi, body)
+    http_request.assert_called_once_with(
         'POST',
         '/orders/market-order',
         response_model=MarketOrderResponse,
@@ -90,10 +87,10 @@ def test_orders_market_order_post_without_broker_account_id(
     )
 
 
-def test_orders_cancel_post(api_client, http_client, broker_account_id):
+def test_orders_cancel_post(http_request, broker_account_id):
     order_id = 'some_order_id'
-    api_client.orders_cancel_post(order_id, broker_account_id)
-    http_client.request.assert_called_once_with(
+    orders_cancel_post(http_request, order_id, broker_account_id)
+    http_request.assert_called_once_with(
         'POST',
         '/orders/cancel',
         response_model=Empty,
@@ -101,10 +98,10 @@ def test_orders_cancel_post(api_client, http_client, broker_account_id):
     )
 
 
-def test_orders_cancel_post_without_broker_account_id(api_client, http_client):
+def test_orders_cancel_post_without_broker_account_id(http_request):
     order_id = 'some_order_id'
-    api_client.orders_cancel_post(order_id)
-    http_client.request.assert_called_once_with(
+    orders_cancel_post(http_request, order_id)
+    http_request.assert_called_once_with(
         'POST',
         '/orders/cancel',
         response_model=Empty,

@@ -1,11 +1,16 @@
 # pylint:disable=too-many-lines
+from collections.abc import Hashable
 from datetime import datetime
+from decimal import Decimal
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Literal, Optional, Tuple
 
 from pydantic import BaseModel, Field
 
+from .typedefs import AnyDict
+
 __all__ = (
+    'HashableModel',
     'BrokerAccountType',
     'Candle',
     'CandleResolution',
@@ -62,9 +67,20 @@ __all__ = (
     'OrderbookStreaming',
     'ErrorStreaming',
     'CandleStreaming',
-    'EventName',
-    'ServiceEventName',
+    'Event',
+    'StreamingResponse',
+    'InstrumentInfoStreamingResponse',
+    'OrderbookStreamingResponse',
+    'CandleStreamingResponse',
+    'ErrorStreamingResponse',
+    'CandleSubscription',
+    'OrderbookSubscription',
+    'InstrumentInfoSubscription',
 )
+
+
+class HashableModel(BaseModel, Hashable):
+    pass
 
 
 class BrokerAccountType(str, Enum):
@@ -178,7 +194,7 @@ class MoneyAmount(BaseModel):
     """MoneyAmount"""
 
     currency: Currency
-    value: float
+    value: Decimal
 
 
 class SearchMarketInstrument(BaseModel):
@@ -186,7 +202,7 @@ class SearchMarketInstrument(BaseModel):
     figi: str
     isin: Optional[str]
     lot: int
-    min_price_increment: Optional[float] = Field(alias='minPriceIncrement')
+    min_price_increment: Optional[Decimal] = Field(alias='minPriceIncrement')
     name: str
     ticker: str
     type: InstrumentType
@@ -203,7 +219,7 @@ class MarketInstrument(BaseModel):
     figi: str
     isin: Optional[str]
     lot: int
-    min_price_increment: Optional[float] = Field(alias='minPriceIncrement')
+    min_price_increment: Optional[Decimal] = Field(alias='minPriceIncrement')
     name: str
     ticker: str
     type: InstrumentType
@@ -211,24 +227,24 @@ class MarketInstrument(BaseModel):
 
 
 class OrderResponse(BaseModel):
-    price: float
+    price: Decimal
     quantity: int
 
 
 class Candle(BaseModel):
-    c: float
+    c: Decimal
     figi: str
-    h: float
+    h: Decimal
     interval: CandleResolution
-    l: float
-    o: float
+    l: Decimal
+    o: Decimal
     time: datetime
     v: int
 
 
 class CurrencyPosition(BaseModel):
-    balance: float
-    blocked: Optional[float]
+    balance: Decimal
+    blocked: Optional[Decimal]
     currency: Currency
 
 
@@ -244,12 +260,12 @@ class Currencies(BaseModel):
 
 class MarketInstrumentList(BaseModel):
     instruments: List[MarketInstrument]
-    total: float
+    total: Decimal
 
 
 class OperationTrade(BaseModel):
     date: datetime
-    price: float
+    price: Decimal
     quantity: int
     trade_id: str = Field(alias='tradeId')
 
@@ -263,8 +279,8 @@ class Operation(BaseModel):
     instrument_type: Optional[InstrumentType] = Field(alias='instrumentType')
     is_margin_call: bool = Field(alias='isMarginCall')
     operation_type: Optional[OperationTypeWithCommission] = Field(alias='operationType')
-    payment: float
-    price: Optional[float]
+    payment: Decimal
+    price: Optional[Decimal]
     quantity: Optional[int]
     quantity_executed: Optional[int] = Field(alias='quantityExecuted')
     status: OperationStatus
@@ -280,7 +296,7 @@ class Order(BaseModel):
     figi: str
     operation: OperationType
     order_id: str = Field(alias='orderId')
-    price: float
+    price: Decimal
     requested_lots: int = Field(alias='requestedLots')
     status: OrderStatus
     type_: OrderType = Field(alias='type')
@@ -289,14 +305,14 @@ class Order(BaseModel):
 class Orderbook(BaseModel):
     asks: List[OrderResponse]
     bids: List[OrderResponse]
-    close_price: Optional[float] = Field(alias='closePrice')
+    close_price: Optional[Decimal] = Field(alias='closePrice')
     depth: int
     figi: str
-    last_price: Optional[float] = Field(alias='lastPrice')
-    limit_down: Optional[float] = Field(alias='limitDown')
-    limit_up: Optional[float] = Field(alias='limitUp')
-    min_price_increment: float = Field(alias='minPriceIncrement')
-    face_value: Optional[float] = Field(alias='faceValue')
+    last_price: Optional[Decimal] = Field(alias='lastPrice')
+    limit_down: Optional[Decimal] = Field(alias='limitDown')
+    limit_up: Optional[Decimal] = Field(alias='limitUp')
+    min_price_increment: Decimal = Field(alias='minPriceIncrement')
+    face_value: Optional[Decimal] = Field(alias='faceValue')
     trade_status: TradeStatus = Field(alias='tradeStatus')
 
 
@@ -317,8 +333,8 @@ class PortfolioPosition(BaseModel):
     average_position_price_no_nkd: Optional[MoneyAmount] = Field(
         alias='averagePositionPriceNoNkd'
     )
-    balance: float
-    blocked: Optional[float]
+    balance: Decimal
+    blocked: Optional[Decimal]
     expected_yield: Optional[MoneyAmount] = Field(alias='expectedYield')
     figi: str
     instrument_type: InstrumentType = Field(alias='instrumentType')
@@ -352,7 +368,7 @@ class Error(BaseModel):
 class LimitOrderRequest(BaseModel):
     lots: int
     operation: OperationType
-    price: float
+    price: Decimal
 
 
 class LimitOrderResponse(BaseModel):
@@ -426,12 +442,12 @@ class PortfolioResponse(BaseModel):
 
 
 class SandboxSetCurrencyBalanceRequest(BaseModel):
-    balance: float
+    balance: Decimal
     currency: SandboxCurrency
 
 
 class SandboxSetPositionBalanceRequest(BaseModel):
-    balance: float
+    balance: Decimal
     figi: Optional[str]
 
 
@@ -452,6 +468,14 @@ class SandboxRegisterRequest(BaseModel):
     class Config:
         allow_population_by_field_name = True
 
+    @classmethod
+    def tinkoff(cls) -> 'SandboxRegisterRequest':
+        return cls(broker_account_type=BrokerAccountType.tinkoff)
+
+    @classmethod
+    def tinkoff_iis(cls) -> 'SandboxRegisterRequest':
+        return cls(broker_account_type=BrokerAccountType.tinkoff_iis)
+
 
 class UserAccount(BaseModel):
     broker_account_type: BrokerAccountType = Field(alias='brokerAccountType')
@@ -471,18 +495,18 @@ class UserAccountsResponse(BaseModel):
 class InstrumentInfoStreaming(BaseModel):
     figi: str
     trade_status: str
-    min_price_increment: float
-    lot: float
-    accrued_interest: Optional[float]
-    limit_up: Optional[float]
-    limit_down: Optional[float]
+    min_price_increment: Decimal
+    lot: Decimal
+    accrued_interest: Optional[Decimal]
+    limit_up: Optional[Decimal]
+    limit_down: Optional[Decimal]
 
 
 class OrderbookStreaming(BaseModel):
     figi: str
     depth: int
-    bids: List[Tuple[float, float]]
-    asks: List[Tuple[float, float]]
+    bids: List[Tuple[Decimal, Decimal]]
+    asks: List[Tuple[Decimal, Decimal]]
 
 
 class ErrorStreaming(BaseModel):
@@ -493,14 +517,64 @@ class ErrorStreaming(BaseModel):
 CandleStreaming = Candle
 
 
-class EventName(str, Enum):
+class Event(str, Enum):
     candle = 'candle'
     orderbook = 'orderbook'
     instrument_info = 'instrument_info'
     error = 'error'
 
 
-class ServiceEventName(str, Enum):
-    startup = 'startup'
-    cleanup = 'cleanup'
-    reconnect = 'reconnect'
+class StreamingResponse(BaseModel):
+    event: Event
+    time: datetime
+    payload: AnyDict
+
+
+class InstrumentInfoStreamingResponse(BaseModel):
+    event: Literal[Event.instrument_info] = Event.instrument_info
+    time: datetime
+    payload: InstrumentInfoStreaming
+
+
+class OrderbookStreamingResponse(BaseModel):
+    event: Literal[Event.orderbook] = Event.orderbook
+    time: datetime
+    payload: OrderbookStreaming
+
+
+class CandleStreamingResponse(BaseModel):
+    event: Literal[Event.candle] = Event.candle
+    time: datetime
+    payload: CandleStreaming
+
+
+class ErrorStreamingResponse(BaseModel):
+    event: Literal[Event.error] = Event.error
+    time: datetime
+    payload: ErrorStreaming
+
+
+class CandleSubscription(HashableModel):
+    figi: str
+    interval: CandleResolution
+    request_id: Optional[str]
+
+    def __hash__(self):
+        return hash((self.figi, self.interval))
+
+
+class OrderbookSubscription(HashableModel):
+    figi: str
+    depth: int
+    request_id: Optional[str]
+
+    def __hash__(self):
+        return hash((self.figi, self.depth))
+
+
+class InstrumentInfoSubscription(HashableModel):
+    figi: str
+    request_id: Optional[str]
+
+    def __hash__(self):
+        return hash((self.figi,))

@@ -1,16 +1,13 @@
-__version__ = '2.3.3'
+__version__ = '3.0.0'
 __api_version__ = '20.4'  # pragma: no mutate
 
-from .apis import (
-    MarketApi,
-    OpenApi,
-    OperationsApi,
-    OrdersApi,
-    PortfolioApi,
-    SandboxApi,
-    UserApi,
+from .clients import AsyncClient, SyncClient
+from .exceptions import (
+    BadRequestError,
+    TinvestError,
+    TooManyRequestsError,
+    UnexpectedError,
 )
-from .async_client import AsyncClient
 from .schemas import (
     BrokerAccountType,
     Candle,
@@ -18,13 +15,17 @@ from .schemas import (
     Candles,
     CandlesResponse,
     CandleStreaming,
+    CandleStreamingResponse,
     Currencies,
     Currency,
     CurrencyPosition,
     Empty,
     Error,
     ErrorStreaming,
+    ErrorStreamingResponse,
+    Event,
     InstrumentInfoStreaming,
+    InstrumentInfoStreamingResponse,
     InstrumentType,
     LimitOrderRequest,
     LimitOrderResponse,
@@ -46,6 +47,7 @@ from .schemas import (
     Orderbook,
     OrderbookResponse,
     OrderbookStreaming,
+    OrderbookStreamingResponse,
     OrderResponse,
     OrdersResponse,
     OrderStatus,
@@ -69,30 +71,29 @@ from .schemas import (
     UserAccounts,
     UserAccountsResponse,
 )
-from .streaming import Streaming, StreamingApi, StreamingEvents
-from .sync_client import SyncClient
+from .streaming import Streaming
 
 __all__ = (
-    # Http Clients
+    # Clients
     'AsyncClient',
     'SyncClient',
+    # Errors
+    'TinvestError',
+    'BadRequestError',
+    'TooManyRequestsError',
+    'UnexpectedError',
     # Streaming
     'Streaming',
-    'StreamingApi',
-    'StreamingEvents',
     # Streaming Schemas
+    'Event',
     'InstrumentInfoStreaming',
     'OrderbookStreaming',
     'ErrorStreaming',
     'CandleStreaming',
-    # API Clients
-    'OpenApi',
-    'MarketApi',
-    'OperationsApi',
-    'OrdersApi',
-    'PortfolioApi',
-    'SandboxApi',
-    'UserApi',
+    'InstrumentInfoStreamingResponse',
+    'OrderbookStreamingResponse',
+    'CandleStreamingResponse',
+    'ErrorStreamingResponse',
     # Schemas
     'BrokerAccountType',
     'Candle',

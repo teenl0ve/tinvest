@@ -5,8 +5,7 @@
 
 import os
 from datetime import datetime, timedelta
-from http import HTTPStatus
-from typing import Any, List, Tuple
+from typing import List, Tuple
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -14,22 +13,10 @@ import plotly.graph_objects as go
 import tinvest as ti
 
 client = ti.SyncClient(os.getenv('TINVEST_TOKEN', ''))
-api = ti.OpenApi(client)
 
 
-class HTTPError(Exception):
-    pass
-
-
-def get_payload(response) -> Any:
-    if response.status_code != HTTPStatus.OK:
-        raise HTTPError(response.parse_error().json())
-    return response.parse_json().payload
-
-
-def main():
-    response = api.portfolio.portfolio_get()
-    payload: ti.Portfolio = get_payload(response)
+def main() -> None:
+    payload = client.get_portfolio().payload
     figis = [(p.figi, p.name) for p in payload.positions]
     fig = get_figure(figis)
     fig.update_layout(xaxis_rangeslider_visible=False)
@@ -55,13 +42,12 @@ def get_candlesstick(df: pd.DataFrame, figi: str, name: str) -> go.Candlestick:
 
 def get_figi_data(figi: str) -> pd.DataFrame:
     now = datetime.now()
-    response = api.market.market_candles_get(
+    payload = client.get_market_candles(
         figi=figi,
         from_=now - timedelta(days=31 * 12),
         to=now,
         interval=ti.CandleResolution.week,
-    )
-    payload: ti.Candles = get_payload(response)
+    ).payload
     return pd.DataFrame(c.dict() for c in payload.candles)
 
 

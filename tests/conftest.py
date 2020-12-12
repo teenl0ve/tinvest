@@ -1,6 +1,5 @@
+# pylint:disable=redefined-outer-name
 import pytest
-
-from tinvest.schemas import Empty, Error
 
 
 @pytest.fixture()
@@ -14,21 +13,20 @@ def figi():
 
 
 @pytest.fixture()
+def request_id():
+    return '123ASD1123'
+
+
+@pytest.fixture()
 def broker_account_id():
     return 'some_broker_account_id'
 
 
 @pytest.fixture()
-def error():
-    return Error(
-        trackingId='tracking_id',
-        payload={},
-    )
+def tracking_id():
+    return 'tracking_id'
 
 
 @pytest.fixture()
-def empty():
-    return Empty(
-        trackingId='tracking_id',
-        payload={},
-    )
+def headers(token):
+    return {'Authorization': f'Bearer {token}', 'accept': 'application/json'}

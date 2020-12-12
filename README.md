@@ -15,13 +15,11 @@ pip install tinvest
 
 Клиент предоставляет синхронный и асинхронный API для взаимодействия с Тинькофф Инвестиции.
 
-CLI
+Есть возможность делать запросы через командную строку, подробнее [тут](https://daxartio.github.io/tinvest/cli/).
 
 ```
 pip install tinvest[cli]
 ```
-
-Есть возможность делать запросы через командную строку, подробнее [тут](https://daxartio.github.io/tinvest/cli/).
 
 ## Начало работы
 
@@ -44,7 +42,7 @@ pip install tinvest[cli]
 
 Для непосредственного взаимодействия с OpenAPI нужно создать клиента. Клиенты разделены на streaming и rest.
 
-Примеры использования SDK находятся ниже.
+Примеры использования SDK находятся [ниже](#Примеры).
 
 ### У меня есть вопрос
 
@@ -57,100 +55,31 @@ pip install tinvest[cli]
 
 ### Streaming
 
-В основном, предоставляет асинхронный интерфейс,
-но также могут использоваться синхронные хендлеры.
-Синхронные хендлеры будут запущены в тредпуле.
-Синхронные хендлеры могут быть использованы для работы с синхронными библиотеками,
-у которых нет асинхронный реализации.
-
-Все хендлеры в рамках одного типа события будут запущены конкурентно.
-Следующее полученное событие будет обрабатываться после успешной обработки предыдущего.
-Если у вас планируется долгая обработка, выполняйте её в отдельной таске или процессе.
-
-Если вам требуется время сервера, то можете указать принимаемый аргумент в хендлере под именем `server_time`.
-В хендлер будет передано серверное время в формате `datetime`.
+Предоставляет асинхронный интерфейс.
 
 > При сетевых сбоях будет произведена попытка переподключения.
 
 ```python
 import asyncio
-from datetime import datetime
-
-import tinvest
-
-TOKEN = "<TOKEN>"
-
-events = tinvest.StreamingEvents()
-
-
-@events.reconnect()
-def handle_reconnect():
-    print('Reconnecting')
-
-
-@events.candle()
-async def handle_candle(
-    api: tinvest.StreamingApi,
-    payload: tinvest.CandleStreaming,
-    server_time: datetime  # [optional] if you want
-):
-    print(payload)
-
-
-@events.orderbook()
-async def handle_orderbook(
-    api: tinvest.StreamingApi, payload: tinvest.OrderbookStreaming
-):
-    print(payload)
-
-
-@events.instrument_info()
-async def handle_instrument_info(
-    api: tinvest.StreamingApi, payload: tinvest.InstrumentInfoStreaming
-):
-    print(payload)
-
-
-@events.error()
-async def handle_error(
-    api: tinvest.StreamingApi, payload: tinvest.ErrorStreaming
-):
-    print(payload)
-
-
-@events.startup()
-async def startup(api: tinvest.StreamingApi):
-    await api.candle.subscribe("BBG0013HGFT4", tinvest.CandleResolution.min1)
-    await api.orderbook.subscribe("BBG0013HGFT4", 5, "123ASD1123")
-    await api.instrument_info.subscribe("BBG0013HGFT4")
-
-
-@events.cleanup()
-async def cleanup(api: tinvest.StreamingApi):
-    await api.candle.unsubscribe("BBG0013HGFT4", "1min")
-    await api.orderbook.unsubscribe("BBG0013HGFT4", 5)
-    await api.instrument_info.unsubscribe("BBG0013HGFT4")
+import tinvest as ti
 
 
 async def main():
-    await tinvest.Streaming(TOKEN, state={"postgres": ...}).add_handlers(events).run()
+    async with ti.Streaming('TOKEN') as streaming:
+        await streaming.candle.subscribe('BBG0013HGFT4', ti.CandleResolution.min1)
+        await streaming.orderbook.subscribe('BBG0013HGFT4', 5)
+        await streaming.instrument_info.subscribe('BBG0013HGFT4')
+        async for event in streaming:
+            print(event)
 
 
-if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        pass
-
+asyncio.run(main())
 ```
 
 ### Синхронный REST API Client
 
 Для выполнения синхронных http запросов используется библиотека `requests`.
-С описанием клиентов можно ознакомиться по этой [ссылке](https://daxartio.github.io/tinvest/tinvest/apis/).
-Возвращаемый аргумент это типичный объект класса `requests.Response`,
-который имеет методы `parse_json` и `parse_error`.
-Эти методы возвращают объекты, наследованные от класса `pydantic.BaseModel`.
+С описанием клиентов можно ознакомиться по этой [ссылке](https://daxartio.github.io/tinvest/tinvest/clients/).
 
 ```python
 import tinvest
@@ -158,21 +87,20 @@ import tinvest
 TOKEN = "<TOKEN>"
 
 client = tinvest.SyncClient(TOKEN)
-api = tinvest.PortfolioApi(client)
 
-response = api.portfolio_get()  # requests.Response
-if response.status_code == 200:
-    print(response.parse_json())  # tinvest.PortfolioResponse
+response = client.get_portfolio()  # tinvest.PortfolioResponse
+print(response.payload)
 ```
 
 ```python
 # Handle error
 ...
-api = tinvest.OperationsApi(client)
+client = tinvest.SyncClient(TOKEN)
 
-response = api.operations_get("", "")
-if response.status_code != 200:
-    print(response.parse_error())  # tinvest.Error
+try:
+    response = client.get_operations("", "")
+except tinvest.BadRequestError as e:
+    print(e.response)  # tinvest.Error
 ```
 
 ### Асинхронный REST API Client
@@ -190,10 +118,8 @@ TOKEN = "<TOKEN>"
 
 async def main():
     client = tinvest.AsyncClient(TOKEN)
-    api = tinvest.PortfolioApi(client)
-    async with api.portfolio_get() as response:  # aiohttp.ClientResponse
-        if response.status == 200:
-            print(await response.parse_json())  # tinvest.PortfolioResponse
+    response = await client.get_portfolio()  # tinvest.PortfolioResponse
+    print(response.payload)
 
     await client.close()
 
@@ -207,8 +133,6 @@ Sandbox позволяет вам попробовать свои торговы
 ```python
 client = tinvest.AsyncClient(SANDBOX_TOKEN, use_sandbox=True)
 # client = tinvest.SyncClient(SANDBOX_TOKEN, use_sandbox=True)
-
-api = tinvest.SandboxApi(client)
 ```
 
 ## Contributing

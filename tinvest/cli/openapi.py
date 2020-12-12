@@ -1,4 +1,3 @@
-import http
 from collections import defaultdict
 from datetime import datetime, timedelta
 from typing import Optional
@@ -31,12 +30,11 @@ def do_request(ctx: typer.Context, method, *args, **kwargs):
         client = ti.SyncClient(ctx.obj.sandbox_token, use_sandbox=True)
     else:
         client = ti.SyncClient(ctx.obj.token)
-    base_api = BaseApi()
-    base_api.client = client
-    response = method(base_api, *args, **kwargs)
-    if response.status_code == http.HTTPStatus.OK:
-        return response.parse_json().payload
-    typer.echo(f'{response.status_code} {response.parse_error().payload}')
+    try:
+        return method(client, *args, **kwargs).payload
+    except ti.BadRequestError as e:
+        typer.echo(f'500 {e.response.payload}')
+
     raise typer.Exit(code=1)
 
 
@@ -79,7 +77,7 @@ def openapi_main(
 def sandbox_register(ctx: typer.Context, broker_account_type: ti.BrokerAccountType):
     payload = do_request(
         ctx,
-        ti.SandboxApi.sandbox_register_post,
+        ti.SyncClient.register_sandbox_account,
         ti.SandboxRegisterRequest(broker_account_type=broker_account_type),
     )
     show(payload.broker_account_id, payload.broker_account_type.value)
@@ -94,7 +92,7 @@ def sandbox_currencies_balance(
 ):
     do_request(
         ctx,
-        ti.SandboxApi.sandbox_currencies_balance_post,
+        ti.SyncClient.set_sandbox_currencies_balance,
         ti.SandboxSetCurrencyBalanceRequest(balance=balance, currency=currency),
         broker_account_id,
     )
@@ -109,7 +107,7 @@ def sandbox_positions_balance(
 ):
     do_request(
         ctx,
-        ti.SandboxApi.sandbox_positions_balance_post,
+        ti.SyncClient.set_sandbox_positions_balance,
         ti.SandboxSetPositionBalanceRequest(balance=balance, figi=figi),
         broker_account_id,
     )
@@ -117,17 +115,17 @@ def sandbox_positions_balance(
 
 @openapi.command()
 def sandbox_remove(ctx: typer.Context, broker_account_id: Optional[str] = None):
-    do_request(ctx, ti.SandboxApi.sandbox_remove_post, broker_account_id)
+    do_request(ctx, ti.SyncClient.remove_sandbox_account, broker_account_id)
 
 
 @openapi.command()
 def sandbox_clear(ctx: typer.Context, broker_account_id: Optional[str] = None):
-    do_request(ctx, ti.SandboxApi.sandbox_clear_post, broker_account_id)
+    do_request(ctx, ti.SyncClient.clear_sandbox_account, broker_account_id)
 
 
 @openapi.command()
 def orders(ctx: typer.Context, broker_account_id: Optional[str] = None):
-    payload = do_request(ctx, ti.OrdersApi.orders_get, broker_account_id)
+    payload = do_request(ctx, ti.SyncClient.get_orders, broker_account_id)
     for order in payload:
         show(
             order.figi,
@@ -152,7 +150,7 @@ def orders_limit_order(  # pylint:disable=too-many-arguments
 ):
     payload = do_request(
         ctx,
-        ti.OrdersApi.orders_limit_order_post,
+        ti.SyncClient.post_orders_limit_order,
         figi,
         ti.LimitOrderRequest(
             operation=operation,
@@ -184,7 +182,7 @@ def orders_market_order(
 ):
     payload = do_request(
         ctx,
-        ti.OrdersApi.orders_market_order_post,
+        ti.SyncClient.post_orders_market_order,
         figi,
         ti.MarketOrderRequest(
             operation=operation,
@@ -209,12 +207,12 @@ def orders_market_order(
 def orders_cancel(
     ctx: typer.Context, order_id: str, broker_account_id: Optional[str] = None
 ):
-    do_request(ctx, ti.OrdersApi.orders_cancel_post, order_id, broker_account_id)
+    do_request(ctx, ti.SyncClient.post_orders_cancel, order_id, broker_account_id)
 
 
 @openapi.command()
 def portfolio(ctx: typer.Context, broker_account_id: Optional[str] = None):
-    payload = do_request(ctx, ti.PortfolioApi.portfolio_get, broker_account_id)
+    payload = do_request(ctx, ti.SyncClient.get_portfolio, broker_account_id)
     for position in payload.positions:
         show(
             position.figi,
@@ -228,9 +226,7 @@ def portfolio(ctx: typer.Context, broker_account_id: Optional[str] = None):
 
 @openapi.command()
 def portfolio_currencies(ctx: typer.Context, broker_account_id: Optional[str] = None):
-    payload = do_request(
-        ctx, ti.PortfolioApi.portfolio_currencies_get, broker_account_id
-    )
+    payload = do_request(ctx, ti.SyncClient.get_portfolio_currencies, broker_account_id)
     for currency in payload.currencies:
         show(
             currency.currency.value,
@@ -241,31 +237,31 @@ def portfolio_currencies(ctx: typer.Context, broker_account_id: Optional[str] = 
 
 @openapi.command()
 def market_stocks(ctx: typer.Context):
-    payload = do_request(ctx, ti.MarketApi.market_stocks_get)
+    payload = do_request(ctx, ti.SyncClient.get_market_stocks)
     _show_instruments_payload(payload)
 
 
 @openapi.command()
 def market_bonds(ctx: typer.Context):
-    payload = do_request(ctx, ti.MarketApi.market_bonds_get)
+    payload = do_request(ctx, ti.SyncClient.get_market_bonds)
     _show_instruments_payload(payload)
 
 
 @openapi.command()
 def market_etfs(ctx: typer.Context):
-    payload = do_request(ctx, ti.MarketApi.market_etfs_get)
+    payload = do_request(ctx, ti.SyncClient.get_market_etfs)
     _show_instruments_payload(payload)
 
 
 @openapi.command()
 def market_currencies(ctx: typer.Context):
-    payload = do_request(ctx, ti.MarketApi.market_currencies_get)
+    payload = do_request(ctx, ti.SyncClient.get_market_currencies)
     _show_instruments_payload(payload)
 
 
 @openapi.command()
 def market_orderbook(ctx: typer.Context, figi: str, depth: int):
-    payload = do_request(ctx, ti.MarketApi.market_orderbook_get, figi, depth)
+    payload = do_request(ctx, ti.SyncClient.get_market_orderbook, figi, depth)
     show('FIGI', payload.figi)
     show('Status', payload.trade_status.value)
     show('Close price', payload.close_price)
@@ -296,7 +292,7 @@ def market_candles(
 ):
     payload = do_request(
         ctx,
-        ti.MarketApi.market_candles_get,
+        ti.SyncClient.get_market_candles,
         figi,
         convert_to_datetime(from_),
         convert_to_datetime(to),
@@ -317,7 +313,7 @@ def market_candles(
 
 @openapi.command()
 def market_search_by_figi(ctx: typer.Context, figi: str):
-    payload = do_request(ctx, ti.MarketApi.market_search_by_figi_get, figi=figi)
+    payload = do_request(ctx, ti.SyncClient.get_market_search_by_figi, figi=figi)
     show(
         payload.figi,
         payload.currency and payload.currency.value,
@@ -330,7 +326,7 @@ def market_search_by_figi(ctx: typer.Context, figi: str):
 
 @openapi.command()
 def market_search_by_ticker(ctx: typer.Context, ticker: str):
-    payload = do_request(ctx, ti.MarketApi.market_search_by_ticker_get, ticker=ticker)
+    payload = do_request(ctx, ti.SyncClient.get_market_search_by_ticker, ticker=ticker)
     _show_instruments_payload(payload)
 
 
@@ -358,7 +354,7 @@ def operations(
 ):
     payload = do_request(
         ctx,
-        ti.OperationsApi.operations_get,
+        ti.SyncClient.get_operations,
         convert_to_datetime(from_),
         convert_to_datetime(to),
         figi,
@@ -386,6 +382,6 @@ def operations(
 
 @openapi.command()
 def accounts(ctx: typer.Context):
-    payload = do_request(ctx, ti.UserApi.accounts_get)
+    payload = do_request(ctx, ti.SyncClient.get_accounts)
     for account in payload.accounts:
         show(account.broker_account_id, account.broker_account_type.value)

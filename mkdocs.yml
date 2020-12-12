@@ -8,12 +8,12 @@ repo_url: 'https://github.com/daxartio/tinvest'
 copyright: 'Copyright &copy; 2020 Tinvest'
 
 nav:
-  - 'Главная': README.md
+  - 'Главная': 'README.md'
   - 'CLI': cli.md
-  - 'tinvest':
-    - apis.py: tinvest/apis.md
+  - 'API Reference':
+    - clients.py: tinvest/clients.md
     - streaming.py: tinvest/streaming.md
-  - 'CHANGELOG': CHANGELOG.md
+  - 'Changelog': CHANGELOG.md
 
 theme:
   name: material
@@ -30,7 +30,7 @@ plugins:
     handlers:
       python:
         rendering:
-          show_source: true
+          show_source: false
     watch:
       - tinvest
 

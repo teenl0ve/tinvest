@@ -1,21 +1,17 @@
 import asyncio
+import contextvars
 import functools
 import typing
 from datetime import timezone
 
 from .typedefs import AnyDict, datetime_or_str
 
-try:
-    import contextvars  # Python 3.7+ only.
-except ImportError:  # pragma: no cover
-    contextvars = None  # type: ignore # pragma: no mutate
-
 __all__ = (
     'set_default_headers',
     'Func',
     'run_in_threadpool',
     'isoformat',
-    'infinity',
+    'validate_token',
 )
 
 
@@ -48,15 +44,10 @@ async def run_in_threadpool(
     func: typing.Callable[..., T], *args: typing.Any, **kwargs: typing.Any
 ) -> T:
     loop = asyncio.get_event_loop()
-    if contextvars is not None:  # pragma: no cover, no mutate
-        # Ensure we run in the same context
-        child = functools.partial(func, *args, **kwargs)
-        context = contextvars.copy_context()
-        func = context.run
-        args = (child,)
-    elif kwargs:  # pragma: no cover
-        # loop.run_in_executor doesn't accept 'kwargs', so bind them in here
-        func = functools.partial(func, **kwargs)  # pragma: no mutate
+    child = functools.partial(func, *args, **kwargs)
+    context = contextvars.copy_context()
+    func = context.run
+    args = (child,)
     return await loop.run_in_executor(None, func, *args)
 
 
@@ -66,12 +57,6 @@ def isoformat(dt: datetime_or_str) -> str:
     return dt.replace(tzinfo=timezone.utc).isoformat()
 
 
-def infinity(func: typing.Callable[..., typing.Awaitable[None]]):
-    @functools.wraps(func)
-    async def wrapper(
-        *args: typing.Any, **kwargs: typing.Any
-    ) -> typing.Awaitable[None]:
-        while True:
-            await func(*args, **kwargs)
-
-    return wrapper
+def validate_token(token: str) -> None:
+    if not token:
+        raise ValueError('Token can not be empty')

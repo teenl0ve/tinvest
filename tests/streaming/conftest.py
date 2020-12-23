@@ -29,9 +29,16 @@ async def session(mocker, ws, message):
     ws.__aiter__.return_value = [message]
 
     s = mocker.AsyncMock(ClientSession)
+    s.closed = False
     s.ws_connect.return_value.__aenter__.return_value = ws
     s.ws_connect.return_value.__aexit__.return_value = False
     return s
+
+
+@pytest.fixture()
+def closed_session(session):
+    session.closed = True
+    return session
 
 
 @pytest.fixture()

@@ -55,6 +55,10 @@ else:
     _BaseQueue = asyncio.Queue
 
 
+class _ClosedSessionError(Exception):
+    pass
+
+
 class Streaming:  # pylint:disable=too-many-instance-attributes
     """
     ```python
@@ -131,6 +135,7 @@ class Streaming:  # pylint:disable=too-many-instance-attributes
         await self._ready.wait()
 
     async def stop(self):
+        await self._unsubscribe()
         await self._queue.put(STOP_QUEUE)
         self._closing.set()
         await self._ws_is_closed.wait()
@@ -144,13 +149,21 @@ class Streaming:  # pylint:disable=too-many-instance-attributes
             return
 
         while True:
-            await self._connect()
+            try:
+                await self._connect()
+            except _ClosedSessionError:
+                break
 
     async def _connect(self) -> None:
         logger.info('Connecting to WebSocket')
         self._closing.clear()
         close_ws_task = None
+        if self._session.closed:
+            self._ready.set()
+            self._ws_is_closed.set()
+            raise _ClosedSessionError
         try:
+
             async with self._session.ws_connect(
                 self._api,
                 headers={'Authorization': f'Bearer {self._token}'},
@@ -159,6 +172,7 @@ class Streaming:  # pylint:disable=too-many-instance-attributes
                 receive_timeout=self._receive_timeout,
             ) as ws:
                 logger.info('Connection established')
+                self._ws_is_closed.clear()
                 close_ws_task = asyncio.create_task(self._close_ws(ws))
                 await self._handle_ws(ws)
         except asyncio.TimeoutError:
@@ -171,7 +185,7 @@ class Streaming:  # pylint:disable=too-many-instance-attributes
             self._closing.set()
             if close_ws_task:
                 await close_ws_task
-            self._ready.clear()
+                self._ready.clear()
 
     async def _close_ws(self, ws: aiohttp.ClientWebSocketResponse):
         try:
@@ -182,9 +196,9 @@ class Streaming:  # pylint:disable=too-many-instance-attributes
             self._ws_is_closed.set()
 
     async def _handle_ws(self, ws: aiohttp.ClientWebSocketResponse):
-        self.candle.set_ws(ws)
-        self.instrument_info.set_ws(ws)
-        self.orderbook.set_ws(ws)
+        self.candle._set_ws(ws)  # pylint:disable=protected-access
+        self.instrument_info._set_ws(ws)  # pylint:disable=protected-access
+        self.orderbook._set_ws(ws)  # pylint:disable=protected-access
         await self._subscribe()
         self._ready.set()
 
@@ -202,14 +216,16 @@ class Streaming:  # pylint:disable=too-many-instance-attributes
                 break
 
     async def _subscribe(self) -> None:
-        await self.candle.subscribe_all()
-        await self.instrument_info.subscribe_all()
-        await self.orderbook.subscribe_all()
+        # pylint:disable=protected-access
+        await self.candle._subscribe_all()
+        await self.instrument_info._subscribe_all()
+        await self.orderbook._subscribe_all()
 
     async def _unsubscribe(self) -> None:
-        await self.candle.unsubscribe_all()
-        await self.instrument_info.unsubscribe_all()
-        await self.orderbook.unsubscribe_all()
+        # pylint:disable=protected-access
+        await self.candle._unsubscribe_all()
+        await self.instrument_info._unsubscribe_all()
+        await self.orderbook._unsubscribe_all()
 
 
 def _parse_response(response: StreamingResponse) -> Any:
@@ -232,53 +248,51 @@ def _parse_response(response: StreamingResponse) -> Any:
 
 
 class _BaseEventAPI:
-    event_name: Event
+    _event_name: Event
 
     def __init__(self):
-        self.ws: Optional[aiohttp.ClientWebSocketResponse] = None
+        self._ws: Optional[aiohttp.ClientWebSocketResponse] = None
         self._subscriptions: Set[HashableModel] = set()
 
     @property
-    def subscription(self) -> str:
-        return f'{self.event_name.value}:subscribe'
+    def _subscription(self) -> str:
+        return f'{self._event_name.value}:subscribe'
 
     @property
-    def unsubscription(self) -> str:
-        return f'{self.event_name.value}:unsubscribe'
+    def _unsubscription(self) -> str:
+        return f'{self._event_name.value}:unsubscribe'
 
-    def set_ws(self, ws: aiohttp.ClientWebSocketResponse) -> None:
-        self.ws = ws
+    def _set_ws(self, ws: aiohttp.ClientWebSocketResponse) -> None:
+        self._ws = ws
 
-    async def subscribe_all(self) -> None:
-        for payload in self._subscriptions:
+    async def _subscribe_all(self) -> None:
+        for payload in list(self._subscriptions):
             await self._send(payload, True)
 
-    async def unsubscribe_all(self) -> None:
-        for payload in self._subscriptions:
+    async def _unsubscribe_all(self) -> None:
+        for payload in list(self._subscriptions):
             await self._send(payload)
 
     async def _send(
         self, payload: HashableModel, is_subscription: bool = False
     ) -> bool:
-        if not self.ws:
+        if not self._ws or self._ws.closed:
             return False
+
         event: str
         if is_subscription:
             self._subscriptions.add(payload)
-            event = self.subscription
+            event = self._subscription
         else:
             self._subscriptions.remove(payload)
-            event = self.unsubscription
-        try:
-            await self.ws.send_json({'event': event, **payload.dict()})
-            return True
-        except ConnectionResetError as e:
-            logger.error('Connection eror: %s', e)
-            return False
+            event = self._unsubscription
+
+        await self._ws.send_json({'event': event, **payload.dict()})
+        return True
 
 
 class CandleAPI(_BaseEventAPI):
-    event_name = Event.candle
+    _event_name = Event.candle
 
     def subscribe(
         self,
@@ -310,7 +324,7 @@ class CandleAPI(_BaseEventAPI):
 
 
 class OrderbookAPI(_BaseEventAPI):
-    event_name = Event.orderbook
+    _event_name = Event.orderbook
 
     def subscribe(self, figi: str, depth: int, request_id: Optional[str] = None):
         return self._send(self._get_payload(figi, depth, request_id), True)
@@ -330,7 +344,7 @@ class OrderbookAPI(_BaseEventAPI):
 
 
 class InstrumentInfoAPI(_BaseEventAPI):
-    event_name = Event.instrument_info
+    _event_name = Event.instrument_info
 
     def subscribe(self, figi: str, request_id: Optional[str] = None):
         return self._send(self._get_payload(figi, request_id), True)

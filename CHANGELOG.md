@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [v3.0.0](https://github.com/daxartio/tinvest/releases/tag/v3.0.0) - 2020-12-21
+
+<small>[Compare with v2.3.3](https://github.com/daxartio/tinvest/compare/v2.3.3...v3.0.0)</small>
+
+### Added
+- Add customclient example ([6405467](https://github.com/daxartio/tinvest/commit/64054674c7fd05e980cdbb36d9f35f9cab1df0ee) by Danil Akhtarov).
+
+
 ## [v2.3.3](https://github.com/daxartio/tinvest/releases/tag/v2.3.3) - 2020-11-18
 
 <small>[Compare with v2.3.2](https://github.com/daxartio/tinvest/compare/v2.3.2...v2.3.3)</small>

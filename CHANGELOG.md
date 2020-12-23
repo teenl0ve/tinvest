@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [v3.0.1](https://github.com/daxartio/tinvest/releases/tag/v3.0.1) - 2020-12-23
+
+<small>[Compare with v3.0.0](https://github.com/daxartio/tinvest/compare/v3.0.0...v3.0.1)</small>
+
+### Fixed
+- Fix closing a session #153 ([99b309e](https://github.com/daxartio/tinvest/commit/99b309eb220459f42113e77662abcfb1d4b2f42d) by Danil Akhtarov).
+
+
 ## [v3.0.0](https://github.com/daxartio/tinvest/releases/tag/v3.0.0) - 2020-12-21
 
 <small>[Compare with v2.3.3](https://github.com/daxartio/tinvest/compare/v2.3.3...v3.0.0)</small>

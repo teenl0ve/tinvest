@@ -1,4 +1,4 @@
-__version__ = '3.0.0'
+__version__ = '3.0.1'
 __api_version__ = '20.4'  # pragma: no mutate
 
 from .clients import AsyncClient, SyncClient

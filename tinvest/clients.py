@@ -233,6 +233,11 @@ class AsyncClient:
         ```python
         async def main():
             client = AsyncClient(TOKEN, use_sandbox=True)
+            body = LimitOrderRequest(
+                lots=2,
+                operation='Buy',
+                price=100.85,
+            )
             await client.post_orders_limit_order(figi, body, broker_account_id)
         ```
         """

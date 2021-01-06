@@ -42,8 +42,9 @@ lint:
 	black --skip-string-normalization --line-length=88 --check $(CODE)
 	pytest --dead-fixtures --dup-fixtures
 	mypy $(CODE)
-	# ignore pipenv for travis-ci
-	safety check --full-report --ignore=38334
+	# --ignore=38334 ignore pipenv for travis-ci
+	# --ignore=39252 cryptography
+	safety check --full-report --ignore=38334 --ignore=39252
 
 .PHONY: format
 format:

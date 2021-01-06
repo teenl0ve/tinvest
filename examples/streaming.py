@@ -1,4 +1,4 @@
-"""Show portfolio candles.
+"""Streaming.
 
     python -m examples.streaming
 """

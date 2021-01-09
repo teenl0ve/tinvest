@@ -19,6 +19,9 @@ pip install tinvest
 
 ```
 pip install tinvest[cli]
+
+# Пример использования
+tinvest openapi --token TOKEN portfolio
 ```
 
 ## Начало работы

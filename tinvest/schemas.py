@@ -191,8 +191,6 @@ class TradeStatus(str, Enum):
 
 
 class MoneyAmount(BaseModel):
-    """MoneyAmount"""
-
     currency: Currency
     value: Decimal
 

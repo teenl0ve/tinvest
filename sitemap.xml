@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url>
+     <loc>https://daxartio.github.io/tinvest/</loc>
+     <lastmod>2021-01-16</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://daxartio.github.io/tinvest/cli/</loc>
+     <lastmod>2021-01-16</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://daxartio.github.io/tinvest/tinvest/clients/</loc>
+     <lastmod>2021-01-16</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://daxartio.github.io/tinvest/tinvest/streaming/</loc>
+     <lastmod>2021-01-16</lastmod>
+     <changefreq>daily</changefreq>
+    </url><url>
+     <loc>https://daxartio.github.io/tinvest/CHANGELOG/</loc>
+     <lastmod>2021-01-16</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+</urlset>

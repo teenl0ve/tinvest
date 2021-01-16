@@ -1,0 +1,1655 @@
+
+<!doctype html>
+<html lang="ru" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Данный проект представляет собой инструментарий на языке Python для работы с OpenAPI Тинькофф Инвестиции, который можно использовать для создания торговых роботов.">
+      
+      
+      
+      
+        <link rel="canonical" href="https://daxartio.github.io/tinvest/CHANGELOG/">
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.2.3">
+    
+    
+      
+        <title>Changelog - Tinvest</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.3b61ea93.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.39b8e14a.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#000000">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../custom.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="black" data-md-color-accent="yellow">
+      
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#changelog" class="md-skip">
+          Перейти к содержанию
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href="https://daxartio.github.io/tinvest/" title="Tinvest" class="md-header-nav__button md-logo" aria-label="Tinvest">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      <div class="md-header-nav__ellipsis">
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            Tinvest
+          </span>
+        </div>
+        <div class="md-header-nav__topic">
+          <span class="md-ellipsis">
+            
+              Changelog
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Поиск" placeholder="Поиск" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header-nav__source">
+        
+<a href="https://github.com/daxartio/tinvest/" title="Перейти к репозиторию" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    tinvest
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="https://daxartio.github.io/tinvest/" title="Tinvest" class="md-nav__button md-logo" aria-label="Tinvest">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Tinvest
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/daxartio/tinvest/" title="Перейти к репозиторию" class="md-source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    tinvest
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+
+  <li class="md-nav__item">
+    <a href=".." class="md-nav__link">
+      Главная
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+
+  <li class="md-nav__item">
+    <a href="../cli/" class="md-nav__link">
+      CLI
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+
+
+  
+  <li class="md-nav__item md-nav__item--nested">
+    
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3" >
+    
+    <label class="md-nav__link" for="nav-3">
+      API Reference
+      <span class="md-nav__icon md-icon"></span>
+    </label>
+    <nav class="md-nav" aria-label="API Reference" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon"></span>
+        API Reference
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../tinvest/clients/" class="md-nav__link">
+      clients.py
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../tinvest/streaming/" class="md-nav__link">
+      streaming.py
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+      
+      
+      
+
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Changelog
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+    
+    <a href="./" class="md-nav__link md-nav__link--active">
+      Changelog
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#v301-2020-12-23" class="md-nav__link">
+    v3.0.1 - 2020-12-23
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.0.1 - 2020-12-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v300-2020-12-21" class="md-nav__link">
+    v3.0.0 - 2020-12-21
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.0.0 - 2020-12-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v233-2020-11-18" class="md-nav__link">
+    v2.3.3 - 2020-11-18
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.3.3 - 2020-11-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_1" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v232-2020-11-18" class="md-nav__link">
+    v2.3.2 - 2020-11-18
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.3.2 - 2020-11-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_1" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_2" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v231-2020-11-11" class="md-nav__link">
+    v2.3.1 - 2020-11-11
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.3.1 - 2020-11-11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_2" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_3" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v230-2020-10-16" class="md-nav__link">
+    v2.3.0 - 2020-10-16
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.3.0 - 2020-10-16">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_3" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_4" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v220-2020-10-04" class="md-nav__link">
+    v2.2.0 - 2020-10-04
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.2.0 - 2020-10-04">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_4" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_5" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v211-2020-09-22" class="md-nav__link">
+    v2.1.1 - 2020-09-22
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.1.1 - 2020-09-22">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_5" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_6" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v210-2020-07-30" class="md-nav__link">
+    v2.1.0 - 2020-07-30
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.1.0 - 2020-07-30">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_6" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_7" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v200-2020-07-10" class="md-nav__link">
+    v2.0.0 - 2020-07-10
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1024-2020-06-26" class="md-nav__link">
+    v1.0.24 - 2020-06-26
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.24 - 2020-06-26">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_8" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1023-2020-06-26" class="md-nav__link">
+    v1.0.23 - 2020-06-26
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.23 - 2020-06-26">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_7" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_9" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1022-2020-05-02" class="md-nav__link">
+    v1.0.22 - 2020-05-02
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.22 - 2020-05-02">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_8" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_10" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1021-2020-04-16" class="md-nav__link">
+    v1.0.21 - 2020-04-16
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.21 - 2020-04-16">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_11" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1020-2020-04-14" class="md-nav__link">
+    v1.0.20 - 2020-04-14
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1019-2020-04-06" class="md-nav__link">
+    v1.0.19 - 2020-04-06
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1018-2020-03-31" class="md-nav__link">
+    v1.0.18 - 2020-03-31
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.18 - 2020-03-31">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_12" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1017-2020-03-23" class="md-nav__link">
+    v1.0.17 - 2020-03-23
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.17 - 2020-03-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_1" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1016-2020-02-14" class="md-nav__link">
+    v1.0.16 - 2020-02-14
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1015-2020-02-08" class="md-nav__link">
+    v1.0.15 - 2020-02-08
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1014-2020-01-28" class="md-nav__link">
+    v1.0.14 - 2020-01-28
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.14 - 2020-01-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_13" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1013-2020-01-28" class="md-nav__link">
+    v1.0.13 - 2020-01-28
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.13 - 2020-01-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_9" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1012-2020-01-23" class="md-nav__link">
+    v1.0.12 - 2020-01-23
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.12 - 2020-01-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_10" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_14" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1011-2019-12-30" class="md-nav__link">
+    v1.0.11 - 2019-12-30
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1010-2019-12-29" class="md-nav__link">
+    v1.0.10 - 2019-12-29
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.10 - 2019-12-29">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_11" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_15" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_1" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Содержание">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Содержание
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#v301-2020-12-23" class="md-nav__link">
+    v3.0.1 - 2020-12-23
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.0.1 - 2020-12-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v300-2020-12-21" class="md-nav__link">
+    v3.0.0 - 2020-12-21
+  </a>
+  
+    <nav class="md-nav" aria-label="v3.0.0 - 2020-12-21">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v233-2020-11-18" class="md-nav__link">
+    v2.3.3 - 2020-11-18
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.3.3 - 2020-11-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_1" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v232-2020-11-18" class="md-nav__link">
+    v2.3.2 - 2020-11-18
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.3.2 - 2020-11-18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_1" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_2" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v231-2020-11-11" class="md-nav__link">
+    v2.3.1 - 2020-11-11
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.3.1 - 2020-11-11">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_2" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_3" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v230-2020-10-16" class="md-nav__link">
+    v2.3.0 - 2020-10-16
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.3.0 - 2020-10-16">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_3" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_4" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v220-2020-10-04" class="md-nav__link">
+    v2.2.0 - 2020-10-04
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.2.0 - 2020-10-04">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_4" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_5" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v211-2020-09-22" class="md-nav__link">
+    v2.1.1 - 2020-09-22
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.1.1 - 2020-09-22">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_5" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_6" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v210-2020-07-30" class="md-nav__link">
+    v2.1.0 - 2020-07-30
+  </a>
+  
+    <nav class="md-nav" aria-label="v2.1.0 - 2020-07-30">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_6" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_7" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v200-2020-07-10" class="md-nav__link">
+    v2.0.0 - 2020-07-10
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1024-2020-06-26" class="md-nav__link">
+    v1.0.24 - 2020-06-26
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.24 - 2020-06-26">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_8" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1023-2020-06-26" class="md-nav__link">
+    v1.0.23 - 2020-06-26
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.23 - 2020-06-26">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_7" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_9" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1022-2020-05-02" class="md-nav__link">
+    v1.0.22 - 2020-05-02
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.22 - 2020-05-02">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_8" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_10" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1021-2020-04-16" class="md-nav__link">
+    v1.0.21 - 2020-04-16
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.21 - 2020-04-16">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_11" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1020-2020-04-14" class="md-nav__link">
+    v1.0.20 - 2020-04-14
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1019-2020-04-06" class="md-nav__link">
+    v1.0.19 - 2020-04-06
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1018-2020-03-31" class="md-nav__link">
+    v1.0.18 - 2020-03-31
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.18 - 2020-03-31">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_12" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1017-2020-03-23" class="md-nav__link">
+    v1.0.17 - 2020-03-23
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.17 - 2020-03-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#changed_1" class="md-nav__link">
+    Changed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1016-2020-02-14" class="md-nav__link">
+    v1.0.16 - 2020-02-14
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1015-2020-02-08" class="md-nav__link">
+    v1.0.15 - 2020-02-08
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1014-2020-01-28" class="md-nav__link">
+    v1.0.14 - 2020-01-28
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.14 - 2020-01-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixed_13" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1013-2020-01-28" class="md-nav__link">
+    v1.0.13 - 2020-01-28
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.13 - 2020-01-28">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_9" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1012-2020-01-23" class="md-nav__link">
+    v1.0.12 - 2020-01-23
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.12 - 2020-01-23">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_10" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_14" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1011-2019-12-30" class="md-nav__link">
+    v1.0.11 - 2019-12-30
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#v1010-2019-12-29" class="md-nav__link">
+    v1.0.10 - 2019-12-29
+  </a>
+  
+    <nav class="md-nav" aria-label="v1.0.10 - 2019-12-29">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#added_11" class="md-nav__link">
+    Added
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixed_15" class="md-nav__link">
+    Fixed
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#removed_1" class="md-nav__link">
+    Removed
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/daxartio/tinvest/edit/master/docs/CHANGELOG.md" title="Редактировать страницу" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="changelog">Changelog</h1>
+<p>All notable changes to this project will be documented in this file.</p>
+<p>The format is based on <a href="http://keepachangelog.com/en/1.0.0/">Keep a Changelog</a>
+and this project adheres to <a href="http://semver.org/spec/v2.0.0.html">Semantic Versioning</a>.</p>
+<h2 id="v301-2020-12-23"><a href="https://github.com/daxartio/tinvest/releases/tag/v3.0.1">v3.0.1</a> - 2020-12-23</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v3.0.0...v3.0.1">Compare with v3.0.0</a></small></p>
+<h3 id="fixed">Fixed</h3>
+<ul>
+<li>Fix closing a session #153 (<a href="https://github.com/daxartio/tinvest/commit/99b309eb220459f42113e77662abcfb1d4b2f42d">99b309e</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v300-2020-12-21"><a href="https://github.com/daxartio/tinvest/releases/tag/v3.0.0">v3.0.0</a> - 2020-12-21</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v2.3.3...v3.0.0">Compare with v2.3.3</a></small></p>
+<h3 id="added">Added</h3>
+<ul>
+<li>Add customclient example (<a href="https://github.com/daxartio/tinvest/commit/64054674c7fd05e980cdbb36d9f35f9cab1df0ee">6405467</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v233-2020-11-18"><a href="https://github.com/daxartio/tinvest/releases/tag/v2.3.3">v2.3.3</a> - 2020-11-18</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v2.3.2...v2.3.3">Compare with v2.3.2</a></small></p>
+<h3 id="fixed_1">Fixed</h3>
+<ul>
+<li>Fix typing (<a href="https://github.com/daxartio/tinvest/commit/bf10adae05347e8f15b07a673046517e85f243d4">bf10ada</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v232-2020-11-18"><a href="https://github.com/daxartio/tinvest/releases/tag/v2.3.2">v2.3.2</a> - 2020-11-18</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v2.3.1...v2.3.2">Compare with v2.3.1</a></small></p>
+<h3 id="added_1">Added</h3>
+<ul>
+<li>Add plotly pandas example (<a href="https://github.com/daxartio/tinvest/commit/c3adafec52451c9d53c64ba0f1554b999409ef88">c3adafe</a> by Danil Akhtarov).</li>
+<li>Add changelog (<a href="https://github.com/daxartio/tinvest/commit/792307f36ee280431cabb4a78ce19fc9363552b1">792307f</a> by Danil Akhtarov).</li>
+</ul>
+<h3 id="fixed_2">Fixed</h3>
+<ul>
+<li>Fix cli portfolio broker_account_id option (<a href="https://github.com/daxartio/tinvest/commit/7265b8b00378682e301b3c2794efc1ed9727477f">7265b8b</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v231-2020-11-11"><a href="https://github.com/daxartio/tinvest/releases/tag/v2.3.1">v2.3.1</a> - 2020-11-11</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v2.3.0...v2.3.1">Compare with v2.3.0</a></small></p>
+<h3 id="added_2">Added</h3>
+<ul>
+<li>Add brokeraccountid optional parameter to operationsapi (<a href="https://github.com/daxartio/tinvest/commit/566dbcf6681068be3dd9817e5584c4b708891c9e">566dbcf</a> by Danil Akhtarov).</li>
+</ul>
+<h3 id="fixed_3">Fixed</h3>
+<ul>
+<li>Fix (<a href="https://github.com/daxartio/tinvest/commit/8d5eae9bd6fcad9b8b5b01ea3009aff19217528d">8d5eae9</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v230-2020-10-16"><a href="https://github.com/daxartio/tinvest/releases/tag/v2.3.0">v2.3.0</a> - 2020-10-16</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v2.2.0...v2.3.0">Compare with v2.2.0</a></small></p>
+<h3 id="added_3">Added</h3>
+<ul>
+<li>Add cli docs (<a href="https://github.com/daxartio/tinvest/commit/c100621d4b05d0020ad4c843dcb8dc25971b894f">c100621</a> by Danil Akhtarov).</li>
+</ul>
+<h3 id="fixed_4">Fixed</h3>
+<ul>
+<li>Fix (<a href="https://github.com/daxartio/tinvest/commit/379c508a386c6ac691851c83a252abb6c8519086">379c508</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v220-2020-10-04"><a href="https://github.com/daxartio/tinvest/releases/tag/v2.2.0">v2.2.0</a> - 2020-10-04</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v2.1.1...v2.2.0">Compare with v2.1.1</a></small></p>
+<h3 id="added_4">Added</h3>
+<ul>
+<li>Add cli (<a href="https://github.com/daxartio/tinvest/commit/04e11621531946663c2759fc69372139dd05400a">04e1162</a> by Danil Akhtarov).</li>
+</ul>
+<h3 id="fixed_5">Fixed</h3>
+<ul>
+<li>Fix travis (<a href="https://github.com/daxartio/tinvest/commit/3f1fa0b400fe709e8b3a4b26079186305cf4f70a">3f1fa0b</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v211-2020-09-22"><a href="https://github.com/daxartio/tinvest/releases/tag/v2.1.1">v2.1.1</a> - 2020-09-22</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v2.1.0...v2.1.1">Compare with v2.1.0</a></small></p>
+<h3 id="added_5">Added</h3>
+<ul>
+<li>Add tests (<a href="https://github.com/daxartio/tinvest/commit/8a4e5a6b6baddf0787d195483784e771b91eba0a">8a4e5a6</a> by Danil Akhtarov).</li>
+</ul>
+<h3 id="fixed_6">Fixed</h3>
+<ul>
+<li>Fix types (<a href="https://github.com/daxartio/tinvest/commit/149a317e538313d56c0d491e4495c6dd15c5a560">149a317</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v210-2020-07-30"><a href="https://github.com/daxartio/tinvest/releases/tag/v2.1.0">v2.1.0</a> - 2020-07-30</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v2.0.0...v2.1.0">Compare with v2.0.0</a></small></p>
+<h3 id="added_6">Added</h3>
+<ul>
+<li>Add tests (<a href="https://github.com/daxartio/tinvest/commit/e523c200c020e63e0d3880c3b23871f4aa843d12">e523c20</a> by Danil Akhtarov).</li>
+<li>Add super class for open api (<a href="https://github.com/daxartio/tinvest/commit/7c07724095d02290e9734b783a0c88a2f81c9f87">7c07724</a> by Danil Akhtarov).</li>
+</ul>
+<h3 id="fixed_7">Fixed</h3>
+<ul>
+<li>Fix readme (<a href="https://github.com/daxartio/tinvest/commit/9e0e0ac602d3fd2722dd0e3641cffddd15c19db4">9e0e0ac</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v200-2020-07-10"><a href="https://github.com/daxartio/tinvest/releases/tag/v2.0.0">v2.0.0</a> - 2020-07-10</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v1.0.24...v2.0.0">Compare with v1.0.24</a></small></p>
+<h2 id="v1024-2020-06-26"><a href="https://github.com/daxartio/tinvest/releases/tag/v1.0.24">v1.0.24</a> - 2020-06-26</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v1.0.23...v1.0.24">Compare with v1.0.23</a></small></p>
+<h3 id="fixed_8">Fixed</h3>
+<ul>
+<li>Fix scripts (<a href="https://github.com/daxartio/tinvest/commit/74de2ceed099849b7a66b030211f1667299b0cb4">74de2ce</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v1023-2020-06-26"><a href="https://github.com/daxartio/tinvest/releases/tag/v1.0.23">v1.0.23</a> - 2020-06-26</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v1.0.22...v1.0.23">Compare with v1.0.22</a></small></p>
+<h3 id="added_7">Added</h3>
+<ul>
+<li>Add cli (<a href="https://github.com/daxartio/tinvest/commit/2bd84918c0d411e893ffeb5fb132c28bf9dc75d5">2bd8491</a> by Danil Akhtarov).</li>
+<li>Add typing (<a href="https://github.com/daxartio/tinvest/commit/f066d4308f7a92d81f8b9cce0f663a5bd30fe833">f066d43</a> by Danil Akhtarov).</li>
+</ul>
+<h3 id="fixed_9">Fixed</h3>
+<ul>
+<li>Fix <strong>all</strong> (<a href="https://github.com/daxartio/tinvest/commit/216c501fb077ab30d5f0ac8173960472e96f4dec">216c501</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v1022-2020-05-02"><a href="https://github.com/daxartio/tinvest/releases/tag/v1.0.22">v1.0.22</a> - 2020-05-02</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v1.0.21...v1.0.22">Compare with v1.0.21</a></small></p>
+<h3 id="added_8">Added</h3>
+<ul>
+<li>Add dependencies (<a href="https://github.com/daxartio/tinvest/commit/44d6c73b754b294bfec648c7d9a6b1f05cc88ce6">44d6c73</a> by Danil Akhtarov).</li>
+</ul>
+<h3 id="fixed_10">Fixed</h3>
+<ul>
+<li>Fix (<a href="https://github.com/daxartio/tinvest/commit/d288eaae371e46021d4c36345dd61ab77063457d">d288eaa</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v1021-2020-04-16"><a href="https://github.com/daxartio/tinvest/releases/tag/v1.0.21">v1.0.21</a> - 2020-04-16</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v1.0.20...v1.0.21">Compare with v1.0.20</a></small></p>
+<h3 id="fixed_11">Fixed</h3>
+<ul>
+<li>Fix parse datetime (<a href="https://github.com/daxartio/tinvest/commit/a6d344240d309cc480b846261ae0ede7b74e0e48">a6d3442</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v1020-2020-04-14"><a href="https://github.com/daxartio/tinvest/releases/tag/v1.0.20">v1.0.20</a> - 2020-04-14</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v1.0.19...v1.0.20">Compare with v1.0.19</a></small></p>
+<h2 id="v1019-2020-04-06"><a href="https://github.com/daxartio/tinvest/releases/tag/v1.0.19">v1.0.19</a> - 2020-04-06</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v1.0.18...v1.0.19">Compare with v1.0.18</a></small></p>
+<h2 id="v1018-2020-03-31"><a href="https://github.com/daxartio/tinvest/releases/tag/v1.0.18">v1.0.18</a> - 2020-03-31</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v1.0.17...v1.0.18">Compare with v1.0.17</a></small></p>
+<h3 id="changed">Changed</h3>
+<ul>
+<li>Change enum name of operationtypewithcommission from buycard to buy_card (<a href="https://github.com/daxartio/tinvest/commit/b98f21bbf08c8d8360cd6252733042eaf8add1f0">b98f21b</a> by Danil Akhtarov).</li>
+</ul>
+<h3 id="fixed_12">Fixed</h3>
+<ul>
+<li>Fix class operationtypewithcommission (add buycard operation type) (<a href="https://github.com/daxartio/tinvest/commit/159223cfa89a4842485db33026c29d1d7c72191e">159223c</a> by ddmrtc).</li>
+<li>Fix readme (<a href="https://github.com/daxartio/tinvest/commit/6e214a2f2b85a9d678275b7008d6f332047291cd">6e214a2</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v1017-2020-03-23"><a href="https://github.com/daxartio/tinvest/releases/tag/v1.0.17">v1.0.17</a> - 2020-03-23</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v1.0.16...v1.0.17">Compare with v1.0.16</a></small></p>
+<h3 id="changed_1">Changed</h3>
+<ul>
+<li>Change pyproject file (<a href="https://github.com/daxartio/tinvest/commit/0b04ea5d28c85780cd8463c1c2963b4c35598cf5">0b04ea5</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v1016-2020-02-14"><a href="https://github.com/daxartio/tinvest/releases/tag/v1.0.16">v1.0.16</a> - 2020-02-14</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v1.0.15...v1.0.16">Compare with v1.0.15</a></small></p>
+<h2 id="v1015-2020-02-08"><a href="https://github.com/daxartio/tinvest/releases/tag/v1.0.15">v1.0.15</a> - 2020-02-08</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v1.0.14...v1.0.15">Compare with v1.0.14</a></small></p>
+<h2 id="v1014-2020-01-28"><a href="https://github.com/daxartio/tinvest/releases/tag/v1.0.14">v1.0.14</a> - 2020-01-28</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v1.0.13...v1.0.14">Compare with v1.0.13</a></small></p>
+<h3 id="fixed_13">Fixed</h3>
+<ul>
+<li>Fix (<a href="https://github.com/daxartio/tinvest/commit/a85705ee0bd7bb99f12e539b5b912fc2c1b8b2e3">a85705e</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v1013-2020-01-28"><a href="https://github.com/daxartio/tinvest/releases/tag/v1.0.13">v1.0.13</a> - 2020-01-28</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v1.0.12...v1.0.13">Compare with v1.0.12</a></small></p>
+<h3 id="added_9">Added</h3>
+<ul>
+<li>Add tests (<a href="https://github.com/daxartio/tinvest/commit/0bddc7fd98470ef108975ebddaca0671dc9d4c26">0bddc7f</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v1012-2020-01-23"><a href="https://github.com/daxartio/tinvest/releases/tag/v1.0.12">v1.0.12</a> - 2020-01-23</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v1.0.11...v1.0.12">Compare with v1.0.11</a></small></p>
+<h3 id="added_10">Added</h3>
+<ul>
+<li>Add shields (<a href="https://github.com/daxartio/tinvest/commit/a78ab3a172d64744bd450082f76f15a415c2ac9b">a78ab3a</a> by Danil Akhtarov).</li>
+</ul>
+<h3 id="fixed_14">Fixed</h3>
+<ul>
+<li>Fix sandbox #2 (<a href="https://github.com/daxartio/tinvest/commit/e5d6ecf6c6044c9dba042b348b1a4b5cdcc050f9">e5d6ecf</a> by Danil Akhtarov).</li>
+</ul>
+<h3 id="removed">Removed</h3>
+<ul>
+<li>Remove python branch 3.8 from travis-ci (<a href="https://github.com/daxartio/tinvest/commit/abed358866cd3178b2e583b744f5e99f56d1e21a">abed358</a> by Danil Akhtarov).</li>
+</ul>
+<h2 id="v1011-2019-12-30"><a href="https://github.com/daxartio/tinvest/releases/tag/v1.0.11">v1.0.11</a> - 2019-12-30</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/v1.0.10...v1.0.11">Compare with v1.0.10</a></small></p>
+<h2 id="v1010-2019-12-29"><a href="https://github.com/daxartio/tinvest/releases/tag/v1.0.10">v1.0.10</a> - 2019-12-29</h2>
+<p><small><a href="https://github.com/daxartio/tinvest/compare/d834f015198a6458e2b0b51d30729ed775ab49e4...v1.0.10">Compare with first commit</a></small></p>
+<h3 id="added_11">Added</h3>
+<ul>
+<li>Add response wrapper (<a href="https://github.com/daxartio/tinvest/commit/ccc5e6c1230ac76b20714b753b2a811d2e6cfd89">ccc5e6c</a> by Danil Akhtarov).</li>
+<li>Add tests (<a href="https://github.com/daxartio/tinvest/commit/ffbc9e22ba7712ac81d46ef94afe5934e4249e8a">ffbc9e2</a> by Danil Akhtarov).</li>
+<li>Add response model (<a href="https://github.com/daxartio/tinvest/commit/803670a0c86c6a9462a010f31bb29b89d5e696f5">803670a</a> by Danil Akhtarov).</li>
+<li>Add args (<a href="https://github.com/daxartio/tinvest/commit/49a69b9a62260b35fffe10f50720964a11b03630">49a69b9</a> by Danil Akhtarov).</li>
+<li>Add state (<a href="https://github.com/daxartio/tinvest/commit/a375ba751c843fbe87dd35a8b66d4ae999ec672f">a375ba7</a> by Danil Akhtarov).</li>
+<li>Add apis (<a href="https://github.com/daxartio/tinvest/commit/85d7c38ea555b37c4db2835284f50fe601f4c951">85d7c38</a> by Danil Akhtarov).</li>
+</ul>
+<h3 id="fixed_15">Fixed</h3>
+<ul>
+<li>Fix sandbox url (<a href="https://github.com/daxartio/tinvest/commit/86f0da5d4833a0ad444cfe700f06de62b11b9e49">86f0da5</a> by Danil Akhtarov).</li>
+</ul>
+<h3 id="removed_1">Removed</h3>
+<ul>
+<li>Remove default value for raise_for_status (<a href="https://github.com/daxartio/tinvest/commit/64ad4d7bdfc6036563c917e95cae119bbffc15b5">64ad4d7</a> by Danil Akhtarov).</li>
+</ul>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href="../tinvest/streaming/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Назад
+                </span>
+                streaming.py
+              </div>
+            </div>
+          </a>
+        
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2020 Tinvest
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/vendor.08c56446.min.js"></script>
+      <script src="../assets/javascripts/bundle.6ced434e.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432 \u0431\u0443\u0444\u0435\u0440", "clipboard.copied": "\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e \u0432 \u0431\u0443\u0444\u0435\u0440", "search.config.lang": "ru", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "\u041f\u043e\u0438\u0441\u043a", "search.result.placeholder": "\u041d\u0430\u0447\u043d\u0438\u0442\u0435 \u043f\u0435\u0447\u0430\u0442\u0430\u0442\u044c \u0434\u043b\u044f \u043f\u043e\u0438\u0441\u043a\u0430", "search.result.none": "\u0421\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439 \u043d\u0435 \u043d\u0430\u0439\u0434\u0435\u043d\u043e", "search.result.one": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e 1 \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0435", "search.result.other": "\u041d\u0430\u0439\u0434\u0435\u043d\u043e # \u0441\u043e\u0432\u043f\u0430\u0434\u0435\u043d\u0438\u0439", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
+      
+      <script>
+        app = initialize({
+          base: "..",
+          features: [],
+          search: Object.assign({
+            worker: "../assets/javascripts/worker/search.8c7e0a7e.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>
